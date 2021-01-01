@@ -1,7 +1,8 @@
 # flask for web app.
 import flask as fl
 # numpy for numerical work.
-import numpy as np
+from powerProduction import powerproductionLinearRegression
+from powerProduction import powerproductionKmeans
 
 # Create a new web app.
 app = fl.Flask(__name__)
@@ -11,12 +12,27 @@ app = fl.Flask(__name__)
 def home():
   return app.send_static_file('index.html')
 
-# Add uniform route.
-@app.route('/api/uniform')
-def uniform():
-  return {"value": np.random.uniform()}
+# Add linerRegression route.
+@app.route('/predict/linerRegression/<int:value>')
+def linerRegression():
+  return {"value": powerproductionLinearRegression.linearRegression(value)}
 
-# Add normal route.
-@app.route('/api/normal')
-def normal():
-  return {"value": np.random.normal()}
+# Add Kmeans Clustering sklearn route.
+@app.route('/predict/Kmeans/<int:value>')
+def kmeans():
+  return {"value": powerproductionKmeans.kMeans(value)}
+  
+  
+  
+@app.route('/predict/tensorFlowKmeans')
+def tensorFlowKmeans():
+  return {"value": powerproductionKmeans.kMeans(value)}
+  
+
+@app.route('/predict/neutronFlowKmeans')
+def tensorFlowneutron():
+  return {"value": powerproductionKmeans.kMeans(value)}
+  
+  
+if __name__ == "__main__":
+    app.run(debug=True)
