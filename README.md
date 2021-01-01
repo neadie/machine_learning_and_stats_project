@@ -2,17 +2,17 @@
 
 # Linux
 ```bash
-export FLASK_APP=powerProductionApp.py
-python3 -m flask run
+
+python3 powerProductionApp.py
 ```
 
 # Windows
 ```bash
-set FLASK_APP=powerProductionApp.py
-python -m flask run
+
+python powerProductionApp.py
 ```
 
 ```bash
-docker build . -t powerProductionApp-image
-docker run --name powerProductionApp-container -d -p 5000:5000 powerProductionApp-image
+docker build . -t powerproductionapp-image
+docker run --name powerproductionapp-container -d -p 5000:5000 powerproductionapp-image
 ```

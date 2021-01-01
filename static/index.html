@@ -19,15 +19,15 @@
         <form>
   <div class="form-group">
     <label for="speedForTurbine">Speed for turbine</label>
-    <input type="number" min="0" class="form-control" id="exampleInputEmail1"  placeholder="Enter Speed for turbine">
+    <input type="number" min="0" class="form-control" id="speedToPredictPower"  placeholder="Enter Speed for turbine">
   </div>
   <div class="form-group">
     <label for="predictionMethod">Method for preduction</label>
      <select id="prediction" class="form-control">
-        <option selected>Linear Regression</option>
-        <option>Sklearn Kmeans</option>
-		<option>TensorFlow Kmeans</option>
-		<option>TensorFlow neurons</option>
+        <option selected value = "1">Linear Regression</option>
+        <option value ="2">Sklearn Kmeans</option>
+		<option value ="3" >TensorFlow Kmeans</option>
+		<option value ="4">TensorFlow neurons</option>
       </select>
   </div>
   
@@ -50,7 +50,94 @@
 
 
     <script>
-   
+    function valueFromValue() {
+	        formInput = {}
+			
+            var form = document.getElementById('container')
+            formInput.speed=  form.querySelector('input[name="speedToPredictPower"]').value   
+			formInput.predictionMethod = form.querySelector('#prediction option:checked').value 
+        }
+		
+		
+		function doPredict() {
+            formInput = valueFromValue()
+			var value = parseInt(formInput.predictionMethod)
+			switch (value) {
+  case 1:
+                $.ajax({
+                url: "/predict/linerRegression/" +formInput.speed,
+                data: JSON.stringify(employee),
+                method: "GET",
+                dataType: "JSON",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    console.log(result)
+                    addEmployeeToTable(employee)
+                    showDisplay()
+                },
+                error: function (xhr, status, error) {
+                    console.log("error " + error)
+                }
+            })
+    break;
+  case 2:
+                $.ajax({
+                url: "/employees",
+                data: JSON.stringify(employee),
+                method: "POST",
+                dataType: "JSON",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    console.log(result)
+                    addEmployeeToTable(employee)
+                    showDisplay()
+                },
+                error: function (xhr, status, error) {
+                    console.log("error " + error)
+                }
+            })
+    break;
+  case 3:
+                 $.ajax({
+                url: "/employees",
+                data: JSON.stringify(employee),
+                method: "POST",
+                dataType: "JSON",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    console.log(result)
+                    addEmployeeToTable(employee)
+                    showDisplay()
+                },
+                error: function (xhr, status, error) {
+                    console.log("error " + error)
+                }
+            })
+    break;
+  case 4:
+                $.ajax({
+                url: "/employees",
+                data: JSON.stringify(employee),
+                method: "POST",
+                dataType: "JSON",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    console.log(result)
+                    addEmployeeToTable(employee)
+                    showDisplay()
+                },
+                error: function (xhr, status, error) {
+                    console.log("error " + error)
+                }
+            })
+    break;
+ 
+  
+}
+
+           
+           
+        }
     </script>
   </body>
 </html>
