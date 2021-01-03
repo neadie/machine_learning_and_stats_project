@@ -9,6 +9,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import MinMaxScaler
 from scipy.spatial.distance import cdist 
 import matplotlib.pyplot as plt
+import pickle
 
 class Powerproduction:
   def __init__(self):
@@ -27,10 +28,11 @@ class PowerproductionLinearRegression(Powerproduction):
         Powerproduction.__init__(self)
         self.reg = LinearRegression()
         
-    def linearRegression(self,value):
+    def linearRegression(self):
         X_train, X_test, y_train, y_test =super().trainTestSplit()
         self.reg.fit(X_train, y_train)
-        return self.reg.predict([[value]])
+        pickle.dump(self.reg, open('linearRegression.pkl','wb'))
+        
     
         
       
@@ -42,7 +44,7 @@ class PowerproductionKmeans(Powerproduction):
         self.kmeans = KMeans(n_clusters = 3, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
         self.reg = LinearRegression()
         
-    def kMeans(self,value):
+    def kMeans(self):
         X_train, X_test, y_train, y_test =super().trainTestSplit()
         self.kmeans.fit(X_train, y_train)
         labels = self.kmeans.fit_predict(X_train)
@@ -58,13 +60,13 @@ class PowerproductionKmeans(Powerproduction):
         if predicted_label == 0:
            
            self.reg.fit(df_with_Labels_Cluster_0[['X_train']],df_with_Labels_Cluster_0['y_train'])
-           return self.reg.predict([[value]])
+           pickle.dump(self.reg, open('linearRegressionCluster0.pkl','wb'))
         elif predicted_label == 1:
              self.reg.fit(df_with_Labels_Cluster_1[['X_train']],df_with_Labels_Cluster_1['y_train'])
-             return self.reg.predict([[value]])
+             pickle.dump(self.reg, open('linearRegressionCluster1.pkl','wb'))
         else:
              self.reg.fit(df_with_Labels_Cluster_2[['X_train']],df_with_Labels_Cluster_2['y_train'])
-             return self.reg.predict([[value]])
+             pickle.dump(self.reg, open('linearRegressionCluster2.pkl','wb'))
         
         
         
@@ -75,6 +77,7 @@ class PowerproductionKmeans(Powerproduction):
 
 
 powerproductionLinearRegression = PowerproductionLinearRegression()
+powerproductionLinearRegression.linearRegression()
 powerproductionKmeans = PowerproductionKmeans()
 
 
