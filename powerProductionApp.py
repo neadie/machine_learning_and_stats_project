@@ -25,29 +25,34 @@ def predict():
     For rendering results on HTML GUI
     '''
     req = request.form
-    valuetoPredict = float(req.get("speedToPredictPower"))
-    machineLearningModel = req.get("prediction")
-   
-    if machineLearningModel == "Linear Regression":
+    try:
+       valuetoPredict = float(req.get("speedToPredictPower"))
+       machineLearningModel = req.get("prediction")
+       if machineLearningModel == "1":
+         powerproductionLinearRegression.linearRegression()
          modelLinearRegression = pickle.load(open('linearRegression.pkl', 'rb'))
          prediction = modelLinearRegression.predict([[valuetoPredict]])
-    elif machineLearningModel == "Sklearn Kmeans":
-         if os.path.isfile('linearRegressionCluster0.pkl'):
+       elif machineLearningModel == "2":
+          powerproductionKmeans.kMeans(valuetoPredict)
+          if os.path.isfile('linearRegressionCluster0.pkl'):
              modelLinearRegression = pickle.load(open('linearRegressionCluster0.pkl', 'rb'))
              prediction = modelLinearRegression.predict([[valuetoPredict]])
-         elif os.path.isfile('linearRegressionCluster1.pkl'):
-            modelLinearRegression = pickle.load(open('linearRegressionCluster1.pkl', 'rb'))
+          elif os.path.isfile('linearRegressionCluster1.pkl'):
+             modelLinearRegression = pickle.load(open('linearRegressionCluster1.pkl', 'rb'))
+             prediction = modelLinearRegression.predict([[valuetoPredict]])
+          else:
+            modelLinearRegression = pickle.load(open('linearRegressionCluster2.pkl', 'rb'))
             prediction = modelLinearRegression.predict([[valuetoPredict]])
-         else:
-           modelLinearRegression = pickle.load(open('linearRegressionCluster2.pkl', 'rb'))
-           prediction = modelLinearRegression.predict([[valuetoPredict]])
-    else:
-        modelLinearRegression = pickle.load(open('linearRegressionCluster2.pkl', 'rb'))
-        prediction = modelLinearRegression.predict([[valuetoPredict]])
+       else:
+          modelLinearRegression = pickle.load(open('linearRegressionCluster2.pkl', 'rb'))
+          prediction = modelLinearRegression.predict([[valuetoPredict]])
 
-    output = round(prediction[0], 2)
+       output = round(prediction[0], 2)
+    except ValueError:
+       return render_template('index.html', error_text='Predicted value is requried ')   
+    
 
-    return render_template('index.html', prediction_text='Predict power in the turnbine is  $ {}'.format(output))
+    return render_template('index.html', prediction_text='Predict power using the method ' + machineLearningModel + '  in the turnbine is  $ {}'.format(output))
   
  
 

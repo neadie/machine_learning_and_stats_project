@@ -44,7 +44,7 @@ class PowerproductionKmeans(Powerproduction):
         self.kmeans = KMeans(n_clusters = 3, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
         self.reg = LinearRegression()
         
-    def kMeans(self):
+    def kMeans(self,value):
         X_train, X_test, y_train, y_test =super().trainTestSplit()
         self.kmeans.fit(X_train, y_train)
         labels = self.kmeans.fit_predict(X_train)
