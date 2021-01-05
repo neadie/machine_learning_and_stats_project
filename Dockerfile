@@ -8,4 +8,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD python powerProductionApp.py
+ENV FLASK_APP=powerProductionApp.py
+
+CMD flask run --host=0.0.0.0
