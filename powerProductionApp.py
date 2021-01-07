@@ -1,8 +1,7 @@
 # flask for web app.
 from flask import Flask, request, jsonify, render_template
 # numpy for numerical work.
-from powerProduction import powerproductionLinearRegression
-from powerProduction import powerproductionKmeans
+from powerProduction import powerproductionLinearRegression,powerproductionKmeans,neuralNetworkTensorFlow
 import pickle
 import os.path
 # Create a new web app.
@@ -28,24 +27,18 @@ def predict():
     try:
        valuetoPredict = float(req.get("speedToPredictPower"))
        machineLearningModel = req.get("prediction")
+       
+       print(machineLearningModel + " model ")
        if machineLearningModel == "1":
          powerproductionLinearRegression.linearRegression()
          modelLinearRegression = pickle.load(open('linearRegression.pkl', 'rb'))
          prediction = modelLinearRegression.predict([[valuetoPredict]])
        elif machineLearningModel == "2":
           powerproductionKmeans.kMeans(valuetoPredict)
-          if os.path.isfile('linearRegressionCluster0.pkl'):
-             modelLinearRegression = pickle.load(open('linearRegressionCluster0.pkl', 'rb'))
-             prediction = modelLinearRegression.predict([[valuetoPredict]])
-          elif os.path.isfile('linearRegressionCluster1.pkl'):
-             modelLinearRegression = pickle.load(open('linearRegressionCluster1.pkl', 'rb'))
-             prediction = modelLinearRegression.predict([[valuetoPredict]])
-          else:
-            modelLinearRegression = pickle.load(open('linearRegressionCluster2.pkl', 'rb'))
-            prediction = modelLinearRegression.predict([[valuetoPredict]])
-       else:
           modelLinearRegression = pickle.load(open('linearRegressionCluster2.pkl', 'rb'))
           prediction = modelLinearRegression.predict([[valuetoPredict]])
+       else:
+          prediction = neuralNetworkTensorFlow.tensorFlow(valuetoPredict)[0]
 
        output = round(prediction[0], 2)
     except ValueError:

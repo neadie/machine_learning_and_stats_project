@@ -1,4 +1,5 @@
-
+import tensorflow as tf
+from tensorflow.keras.layers.experimental import preprocessing
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
@@ -10,7 +11,6 @@ from sklearn.preprocessing import MinMaxScaler
 from scipy.spatial.distance import cdist 
 import matplotlib.pyplot as plt
 import pickle
-
 class Powerproduction:
   def __init__(self):
     self.df =  pd.read_csv("powerproductionDataSet.csv")
@@ -45,52 +45,47 @@ class PowerproductionKmeans(Powerproduction):
         self.reg = LinearRegression()
         
     def kMeans(self,value):
-        X_train, X_test, y_train, y_test =super().trainTestSplit()
-        self.kmeans.fit(X_train, y_train)
-        labels = self.kmeans.fit_predict(X_train)
-        df_with_Labels= df = pd.DataFrame(columns = ['Labels', 'X_train','y_train'])
-        df['Labels'] = labels
-        df['X_train'] = X_train
-        df['y_train'] = y_train
-        df_with_Labels.dropna()
-        df_with_Labels_Cluster_0 = df_with_Labels[df_with_Labels['Labels'] == 0].dropna()
-        df_with_Labels_Cluster_1 = df_with_Labels[df_with_Labels['Labels'] == 1].dropna()
-        df_with_Labels_Cluster_2 = df_with_Labels[df_with_Labels['Labels'] == 2].dropna()
-        predicted_label = self.kmeans.predict([[value]])
-        if predicted_label == 0:
-           
-           self.reg.fit(df_with_Labels_Cluster_0[['X_train']],df_with_Labels_Cluster_0['y_train'])
-           pickle.dump(self.reg, open('linearRegressionCluster0.pkl','wb'))
-        elif predicted_label == 1:
-             self.reg.fit(df_with_Labels_Cluster_1[['X_train']],df_with_Labels_Cluster_1['y_train'])
-             pickle.dump(self.reg, open('linearRegressionCluster1.pkl','wb'))
-        else:
-             self.reg.fit(df_with_Labels_Cluster_2[['X_train']],df_with_Labels_Cluster_2['y_train'])
-             pickle.dump(self.reg, open('linearRegressionCluster2.pkl','wb'))
-        
+        self.kmeans.fit(self.df)
+        y_kmeans = self.kmeans.fit_predict(self.df)
+        cluster_2df = self.df.loc[y_kmeans == 2]
+        X_train2, X_test2, y_train2, y_test2 = train_test_split(cluster_2df[['speed']], cluster_2df['power'], test_size=0.2, random_state=0)
+        self.reg.fit(X_train2, y_train2)
+        pickle.dump(self.reg, open('linearRegressionCluster2.pkl','wb'))
+               
         
         
         
          
-
+class NeuralNetworkTensorFlow(Powerproduction):
+    def __init__(self):
+        Powerproduction.__init__(self)
+        
+        
+    def tensorFlow(self,value):
+        train_dataset = self.df.sample(frac=0.8, random_state=0)
+        test_dataset = self.df.drop(train_dataset.index)
+        train_features = train_dataset.copy()
+        test_features = test_dataset.copy()
+        train_labels = train_features.pop('power')
+        test_labels = test_features.pop('power')
+        speed = np.array(train_features['speed'])
+        speed_normalizer = preprocessing.Normalization(input_shape=[1,])
+        speed_normalizer.adapt(speed)
+        speed_model = tf.keras.Sequential([
+        speed_normalizer,
+        tf.keras.layers.Dense(50, input_shape=(1,), activation='sigmoid', kernel_initializer="glorot_uniform", bias_initializer="glorot_uniform")])
+        speed_model.add(tf.keras.layers.Dense(1, activation='linear', kernel_initializer="glorot_uniform", bias_initializer="glorot_uniform"))
+        speed_model.compile(optimizer=tf.optimizers.Adam(learning_rate=0.1),loss='mean_absolute_error')
+        speed_model.fit(train_features['speed'], train_labels,epochs=100,verbose=0,validation_split = 0.2)
+        return speed_model.predict([value])
 
 
 
 powerproductionLinearRegression = PowerproductionLinearRegression()
 powerproductionLinearRegression.linearRegression()
 powerproductionKmeans = PowerproductionKmeans()
-
-
-
-
-
-
-
-
-
-
-
-
+neuralNetworkTensorFlow=NeuralNetworkTensorFlow()
+print(neuralNetworkTensorFlow.tensorFlow(12.5))
 
 
 
