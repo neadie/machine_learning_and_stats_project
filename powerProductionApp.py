@@ -27,17 +27,20 @@ def predict():
     try:
        valuetoPredict = float(req.get("speedToPredictPower"))
        machineLearningModel = req.get("prediction")
+       modelText = ""
        
-       print(machineLearningModel + " model ")
        if machineLearningModel == "1":
+         modelText = "Linear Regression"
          powerproductionLinearRegression.linearRegression()
          modelLinearRegression = pickle.load(open('linearRegression.pkl', 'rb'))
          prediction = modelLinearRegression.predict([[valuetoPredict]])
        elif machineLearningModel == "2":
+          modelText = "Kmeans and Linear Regression"
           powerproductionKmeans.kMeans(valuetoPredict)
           modelLinearRegression = pickle.load(open('linearRegressionCluster2.pkl', 'rb'))
           prediction = modelLinearRegression.predict([[valuetoPredict]])
        else:
+          modelText = "Neural Network Regression"
           prediction = neuralNetworkTensorFlow.tensorFlow(valuetoPredict)[0]
 
        output = round(prediction[0], 2)
@@ -45,7 +48,7 @@ def predict():
        return render_template('index.html', error_text='Predicted value is requried ')   
     
 
-    return render_template('index.html', prediction_text='Predict power using the method ' + machineLearningModel + '  in the turnbine is  $ {}'.format(output))
+    return render_template('index.html', prediction_text='Predict power using the method ' + modelText + '  in the turnbine is   {}KW'.format(output))
   
  
 
