@@ -1,3 +1,11 @@
+# Jupter notebook
+
+1. Create virtual enviroment 
+   use command **python -m venv { whatever path you want for virtual enviroment}**
+2. Go to Scripts folder of the virtual enviroment and run **activate **
+3. Cd into the project and to install all the requirements use command  **pip install --no-cache-dir -r requirements.txt**
+4. To run the jupyter notebook run **jupyter lab**
+
 # Random numerical app.
 
 # Linux
@@ -18,13 +26,3 @@ docker run --name powerproductionapp-container -d -p 5000:5000 powerproductionap
 ```
 
 
-### progress to far 
- 1. linear regresssion
- 2. kmeans and linear regression ( may go for other forms of regression on cluster lower and higher cluster , middle cluster has a good relationship 
-
-
-### TODO 
-
- 1. more input on kmeans and regression
- 2. tensorflow regression and kmeans 
- 
